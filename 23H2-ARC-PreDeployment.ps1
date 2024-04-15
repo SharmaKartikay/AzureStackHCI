@@ -28,7 +28,7 @@ Invoke-Command -ComputerName 10.1.1.31,10.1.1.32,10.1.1.33 -Credential $CREDS -S
 Install-Module AzsHCI.ARCinstaller -FORCE
 }
 
-# Install App Compat FOD for Minimum Shell for ease of troubelshooting which adds support for Explorer.exe and MMC.exe (Optional and requires Reboot)
+# Install App Compat FOD (Minimum Shell) for the ease of troubelshooting. It adds support for Explorer.exe and MMC.exe (Optional and requires Reboot)
 Invoke-Command -ComputerName 10.1.1.31,10.1.1.32,10.1.1.33 -Credential $CREDS -ScriptBlock{
 #Add-WindowsCapability -Online -Name ServerCore.AppCompatibility~~~~0.0.1.0
 cmd /c dism /online /Add-Capability /CapabilityName:ServerCore.AppCompatibility~~~~0.0.1.0
