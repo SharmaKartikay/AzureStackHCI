@@ -1,5 +1,5 @@
 #####
-##### Run parts from this script from a management machine in the network pointing to the HCI 23H2 nodes using their IP Addresses to curb any DNS issues as the nodes are not join to the domain.
+##### Run parts from this script from a management machine in the network pointing to the HCI 23H2 nodes using their IP Addresses to curb any DNS issues since the nodes are not domain joined.
 #####
 
 ### START OF RUN ONCE SECTION ###
