@@ -7,7 +7,7 @@
 # Enable WinRM CredSSP and Setting Trusted Hosts to any for sending credentials when using IP Address instead of Hostname.
 Enable-WSManCredSSP -Role Client -DelegateComputer * -Force
 Enable-WSManCredSSP -Role Server -Force
-winrm set winrm/config/client '@{TrustedHosts="*"}'
+cmd /c winrm set winrm/config/client '@{TrustedHosts="*"}'
 
 # Supply the Local Administrator Credentials of the baremetal installed nodes.
 $CREDS=(Get-Credential -Message "Local Administrator Account and Password")
@@ -71,9 +71,9 @@ Install-Module Az.Resources -Force
 
 # Enroll machines in Arc. **** Change the values of variables defined below.
 Invoke-Command -ComputerName $Nodes -Credential $CREDS -ScriptBlock{
-$Subscription = "b37c2031-8a5d-4a5a-872d-403dbf403410"
+$Subscription = "b37c2031-xxxx-xxxx-xxxx-403dbf403410"
 $RG = "WORKSPACE-23H2"
-$Tenant = "f67bb77d-e94c-49a5-ba5a-92300e68498a"
+$Tenant = "f67bb77d-xxxx-xxxx-xxxx-92300e68498a"
 Connect-AzAccount -SubscriptionId $Subscription -TenantId $Tenant -DeviceCode
 
 #Register Resource Providers on the Subscription
@@ -89,9 +89,9 @@ Invoke-AzStackHciArcInitialization -SubscriptionID $Subscription -ResourceGroup 
 
 # Remove Arc Enrollment of the Machines. **** Change the values of variables defined below.
 Invoke-Command -ComputerName $Nodes -Credential $CREDS -ScriptBlock{
-$Subscription = "b37c2031-8a5d-4a5a-872d-403dbf403410"
+$Subscription = "b37c2031-xxxx-xxxx-xxxx-403dbf403410"
 $RG = "WORKSPACE-23H2"
-$Tenant = "f67bb77d-e94c-49a5-ba5a-92300e68498a"
+$Tenant = "f67bb77d-xxxx-xxxx-xxxx-92300e68498a"
 Connect-AzAccount -SubscriptionId $Subscription -TenantId $Tenant -DeviceCode
 
 $ARMtoken = (Get-AzAccessToken).Token
