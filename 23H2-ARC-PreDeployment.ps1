@@ -107,9 +107,9 @@ Install-Module Az.Resources -Force
 
 # Enroll machines in Arc. **** Change the values of variables defined below.
 Invoke-Command -ComputerName $Nodes -Credential $CREDS -ScriptBlock{
-$Subscription = "b37c2031-8a5d-4a5a-872d-403dbf403410"
+$Subscription = "b37c2031-xxxx-xxxx-xxxx-403dbf403410"
 $RG = "LAB1"
-$Tenant = "f67bb77d-e94c-49a5-ba5a-92300e68498a"
+$Tenant = "f67bb77d-xxxx-xxxx-xxxx-92300e68498a"
 Connect-AzAccount -SubscriptionId $Subscription -TenantId $Tenant -DeviceCode -SkipContextPopulation -Environment AzureCloud -Force -AccountId admin@theqtz.com
 Update-AzConfig -EnableLoginByWam $false -Scope CurrentUser
 ##Register Resource Providers on the Subscription by Executing these lines on any one node when logged on to Azure. (This is a Tenant Level Change)
