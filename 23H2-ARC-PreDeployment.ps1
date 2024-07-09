@@ -64,12 +64,12 @@
     Get-NetAdapterAdvancedProperty -Name smb* -DisplayName "VLAN ID"
     }
 
-Invoke-Command -Credential $CREDS -ComputerName 10.1.1.11 -ScriptBlock {New-NetIPAddress -InterfaceAlias SMB1 -IPAddress 1.1.1.1 -PrefixLength 28
-                                                                        New-NetIPAddress -InterfaceAlias SMB2 -IPAddress 2.2.2.1 -PrefixLength 28}
-Invoke-Command -Credential $CREDS -ComputerName 10.1.1.12 -ScriptBlock {New-NetIPAddress -InterfaceAlias SMB1 -IPAddress 1.1.1.2 -PrefixLength 28
-                                                                        New-NetIPAddress -InterfaceAlias SMB2 -IPAddress 2.2.2.2 -PrefixLength 28}
-Invoke-Command -Credential $CREDS -ComputerName 10.1.1.13 -ScriptBlock {New-NetIPAddress -InterfaceAlias SMB1 -IPAddress 1.1.1.3 -PrefixLength 28
-                                                                        New-NetIPAddress -InterfaceAlias SMB2 -IPAddress 2.2.2.3 -PrefixLength 28}
+Invoke-Command -Credential $CREDS -ComputerName 10.1.1.11 -ScriptBlock {New-NetIPAddress -InterfaceAlias SMB1 -IPAddress 1.1.1.1 -PrefixLength 24
+                                                                        New-NetIPAddress -InterfaceAlias SMB2 -IPAddress 2.2.2.1 -PrefixLength 24}
+Invoke-Command -Credential $CREDS -ComputerName 10.1.1.12 -ScriptBlock {New-NetIPAddress -InterfaceAlias SMB1 -IPAddress 1.1.1.2 -PrefixLength 24
+                                                                        New-NetIPAddress -InterfaceAlias SMB2 -IPAddress 2.2.2.2 -PrefixLength 24}
+Invoke-Command -Credential $CREDS -ComputerName 10.1.1.13 -ScriptBlock {New-NetIPAddress -InterfaceAlias SMB1 -IPAddress 1.1.1.3 -PrefixLength 24
+                                                                        New-NetIPAddress -InterfaceAlias SMB2 -IPAddress 2.2.2.3 -PrefixLength 24}
 
 ### END OF RUN ONCE SECTION ###
 
@@ -110,7 +110,7 @@ Invoke-Command -ComputerName $Nodes -Credential $CREDS -ScriptBlock{
 $Subscription = "b37c2031-xxxx-xxxx-xxxx-403dbf403410"
 $RG = "LAB1"
 $Tenant = "f67bb77d-xxxx-xxxx-xxxx-92300e68498a"
-Connect-AzAccount -SubscriptionId $Subscription -TenantId $Tenant -DeviceCode -SkipContextPopulation -Environment AzureCloud -Force -AccountId admin@theqtz.com
+Connect-AzAccount -SubscriptionId $Subscription -TenantId $Tenant -DeviceCode -SkipContextPopulation -Environment AzureCloud -Force -AccountId admin@domain.com
 Update-AzConfig -EnableLoginByWam $false -Scope CurrentUser
 ##Register Resource Providers on the Subscription by Executing these lines on any one node when logged on to Azure. (This is a Tenant Level Change)
 #Register-AzResourceProvider -ProviderNamespace "Microsoft.HybridCompute"
@@ -161,6 +161,7 @@ $NameValuePairs = @{
     "OSActiveDirectoryBackup" = 1
     "OSActiveDirectoryInfoToStore" = 1
     "OSRequireActiveDirectoryBackup" = 1
+    "OSEncryptionType" = 2
     "FDVRecovery" = 1
     "FDVManageDRA" = 1
     "FDVRecoveryPassword" = 2
@@ -169,6 +170,8 @@ $NameValuePairs = @{
     "FDVActiveDirectoryBackup" = 1
     "FDVActiveDirectoryInfoToStore" = 1
     "FDVRequireActiveDirectoryBackup" = 1
+    "FDVEncryptionType" = 2
+    
 }
 
 if (!(Test-Path $registryPath)) {
@@ -186,11 +189,16 @@ foreach ($entry in $NameValuePairs.GetEnumerator()) {
 #
 #
 Invoke-Command -ComputerName $Nodes -Credential $CREDS -ScriptBlock{
-Get-NetAdapterAdvancedProperty -Name SMB* -DisplayName 'VLAN ID'
-#Set-NetIntent -Name smb -StorageVlans 0
+Get-NetAdapterAdvancedProperty -Name SMB* -DisplayName 'VLAN ID' | ft
+#The Net Intent Command is CASE SENSITIVE.
+#Set-NetIntent -Name storage -StorageVlans 0
 #Reset-NetAdapterAdvancedProperty -DisplayName 'VLAN ID' -Name SMB*
-#Get-NetAdapterAdvancedProperty -Name SMB* -DisplayName 'VLAN ID'
-Restart-NetAdapter -Name SMB1
-Pause
-Restart-NetAdapter -Name SMB2
+#Get-NetAdapterAdvancedProperty -Name SMB* -DisplayName 'VLAN ID' | FT
+#Restart-NetAdapter -Name SMB*
+}
+
+#Check the Bitlocker Volume Conversion Type for all volumes.
+
+Invoke-Command -ComputerName $Nodes -Credential $CREDS -ScriptBlock{
+Manage-bde -status | findstr -i conversion
 }
